@@ -175,6 +175,8 @@ export class MiningPoolShares {
           if(userTrans.publicAddress !== undefined) {
             let validationPublicAddress = userTrans.publicAddress.split('');
             if (validationPublicAddress.length === 86) {
+              console.log('Added payout!!!');
+              
               await this.howMuchPay({
                   publicAddress: userTrans.publicAddress,
                   amount: Math.floor(Number(userTrans.amount.toString()))
