@@ -77,7 +77,11 @@ export class PoolDatabase {
      `
 
     const result = await this.db.run(query, successfulPayoutCutoff, attemptPayoutCutoff)
+    console.log(await result);
+    
     if (result.changes !== 0 && result.lastID != null) {
+      console.log("result");
+      
       return result.lastID
     }
 
@@ -233,11 +237,14 @@ export class PoolDatabase {
   }
 
   async setTheUserPayout(successfulTransaction: recordThePayout) {
-    const sql = 'INSERT INTO paidCoins (publicAddress, amount, timestamp, createdAt) VALUES (?,?,?,?)'
+    const sql = 'INSERT INTO paidCoins (publicAddress, amount, timestamp, createdAt, hash) VALUES (?,?,?,?,?)'
     await this.db.run(sql, [
                             successfulTransaction.publicAddress, successfulTransaction.amount,
-                            successfulTransaction.timestamp, successfulTransaction.createdAt
+                            successfulTransaction.timestamp, successfulTransaction.createdAt,
+                            successfulTransaction.hash
                            ])
+    console.log(successfulTransaction);
+    console.log(successfulTransaction.hash);
  }
 
   async getTheUserPayout(publicAddress: string): Promise<any> {
@@ -268,6 +275,7 @@ export class PoolDatabase {
     return await this.db.all('SELECT * FROM payout')
   }
 
+  // set All Block From Json File
   async setAllUsers(transaction: {block: string, height: string, timestamp: number}) {
     await this.db.run(`INSERT INTO transactions (block, height, timestamp) VALUES (?,?,?)`, 
       transaction.block,
@@ -277,7 +285,16 @@ export class PoolDatabase {
   }
 
   async deletedDontNeedsBlock() {
+    await this.db.run('DELETE from transactions WHERE id > 598')
+  }
+
+  async deletePayout() {
     await this.db.run('DELETE from share')
+  }
+
+  async addColumnInTable() {
+    const sql = 'ALTER TABLE paidCoins ADD COLUMN hash';
+    await this.db.run(sql)
   }
 }
 
@@ -293,4 +310,5 @@ export type recordThePayout = {
   amount: number | string
   timestamp: number
   createdAt: string
+  hash: string
 }

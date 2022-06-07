@@ -261,6 +261,7 @@ export class MiningPool {
         )
         this.discord?.poolSubmittedBlock(hashedHeader, hashRate, this.stratum.clients.size)
         this.lark?.poolSubmittedBlock(hashedHeader, hashRate, this.stratum.clients.size)
+        this.informationAboutTheBlock({hashedHeader: hashedHeader.toString('hex'), height: String(miningRequestId)}, new Date().getTime())
       } else {
         this.logger.info(`Block was rejected: ${result.content.reason}`)
       }
@@ -522,9 +523,5 @@ export class MiningPool {
 
   async setAllUsers(transaction: {block: string, height: string, timestamp: number}) {
     await this.shares.setAllUsers(transaction)
-  }
-
-  async deletedDontNeedsBlock() {
-    await this.shares.deletedDontNeedsBlock()
   }
 }

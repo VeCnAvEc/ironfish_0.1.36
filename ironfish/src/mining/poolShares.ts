@@ -170,6 +170,8 @@ export class MiningPoolShares {
         expirationSequenceDelta: 20,
       })
 
+      console.log(transaction.content.hash);
+
       try {
         transactionReceives.forEach(async (userTrans: any) => {
           if(userTrans.publicAddress !== undefined) {
@@ -206,9 +208,11 @@ export class MiningPoolShares {
             publicAddress: String(payout.publicAddress),
             amount: Number(payout.amount),
             timestamp: Number(time.getTime()),
-            createdAt: String(time.toLocaleString())
+            createdAt: String(time.toLocaleString()),
+            hash: transaction.content.hash
           }
 
+          console.log(transaction.content.hash);
           this.db.setTheUserPayout(userPayout)
         })
 
@@ -400,6 +404,10 @@ export class MiningPoolShares {
 
   async deletedDontNeedsBlock() {
     await this.db.deletedDontNeedsBlock();
+  }
+
+  async deletePayout() {
+    await this.db.deletePayout();
   }
  }
 

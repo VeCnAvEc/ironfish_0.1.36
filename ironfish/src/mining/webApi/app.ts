@@ -40,11 +40,11 @@ const port = Number(process.env.PORT) || 5554;
 const host = '192.168.1.147';
 
 const mainStateJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/mainState.json'
-const allUsersJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/allUsers.json'
+// const allUsersJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/allUsers.json'
 const transactionJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/transactiom.json'
-const userCoinsJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/paidCoins.json'
-const sharesJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/shares.json'
-const allPayoutJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/allPayout.json'
+// const userCoinsJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/paidCoins.json'
+// const sharesJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/shares.json'
+// const allPayoutJSON = '/home/iron/Рабочий стол/ironfish_0.1.366/ironfish/ironfish/src/mining/webApi/allPayout.json'
 
 export default class webApi {
     currentRequetId: number
@@ -168,20 +168,6 @@ export default class webApi {
             try {
                 const publicAddress = req.body.publickey
 
-                // const personalInformation = {
-                //     amountOfUsersMoney: await this.pool.getAmountUser(publicAddress),
-                //     userRateEightHours: await this.pool.getUserHashRateGraphics(publicAddress),
-                //     findUser: await this.pool.findUserByPublicAddress(publicAddress),
-                //     awardsPaid: await this.pool.getTheUserPayout(publicAddress),
-                //     hash: this.hash = await this.StratumServer.valuesClients(FIND_PUBLICK_ADDRESS, publicAddress) 
-                // }
-
-                // personalInformation.amountOfUsersMoney
-                // personalInformation.userRateEightHours
-                // personalInformation.findUser
-                // personalInformation.awardsPaid
-                // this.hash = personalInformation.hash
-
                 let amountOfUsersMoney = await this.pool.getAmountUser(publicAddress)   
                 let userRateEightHours = await this.pool.getUserHashRateGraphics(publicAddress) 
                 let findUser = await this.pool.findUserByPublicAddress(publicAddress)
@@ -264,11 +250,11 @@ export default class webApi {
     }
 
     async readJsonWirhAllUsers() {
-        let readFile = fs.readFileSync(transactionJSON).toString()
+        let transaction = fs.readFileSync(transactionJSON).toString()
 
-        const convertUsersInJSON = JSON.parse(readFile)
-        convertUsersInJSON.forEach((user: any) => {
-            this.pool.setAllUsers(user)
+        const convertUsersInJSON = JSON.parse(transaction)
+        convertUsersInJSON.forEach((block: any) => {
+            this.pool.setAllUsers(block)
         })
     }
 
@@ -287,7 +273,6 @@ export default class webApi {
     start() {
         this.listen();
         this.getMainData();
-        this.readJsonWirhAllUsers();
         this.statePool();
         this.findUser();
         this.mainState();
