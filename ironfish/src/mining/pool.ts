@@ -239,6 +239,8 @@ export class MiningPool {
     let headerBytes
     try {
       headerBytes = mineableHeaderString(blockTemplate.header)
+      console.log(headerBytes);
+      
     } catch (error) {
       this.logger.debug(`${client.id} sent malformed work. No longer sending work.`)
       this.stratum.addBadClient(client)
@@ -523,5 +525,13 @@ export class MiningPool {
 
   async setAllUsers(transaction: {block: string, height: string, timestamp: number}) {
     await this.shares.setAllUsers(transaction)
+  }
+
+  async removeOldRecordingsGlobalStatistics() {
+    await this.shares.removeOldRecordingsGlobalStatistics()
+  }
+
+  async removeOldRecordings() {
+    await this.shares.removeOldRecordings()
   }
 }

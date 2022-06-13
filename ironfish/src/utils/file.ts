@@ -37,6 +37,26 @@ const formatSize = (bytes: number, base: number, suffix: SizeSuffix): string => 
   return MathUtils.floor(bytes / Math.pow(base, 5), 2).toFixed(2) + ` ${suffix.PB}`
 }
 
+const formatSizeWithoutSuffix = (bytes: number, base: number) => {
+  if (bytes < Math.pow(base, 1)) {
+    return bytes.toFixed(0)
+  }
+  if (bytes < Math.pow(base, 2)) {
+    return MathUtils.floor(bytes / Math.pow(base, 1), 2).toFixed(2)
+  }
+  if (bytes < Math.pow(base, 3)) {
+    return MathUtils.floor(bytes / Math.pow(base, 2), 2).toFixed(2)
+  }
+  if (bytes < Math.pow(base, 4)) {
+    return MathUtils.floor(bytes / Math.pow(base, 3), 2).toFixed(2)
+  }
+  if (bytes < Math.pow(base, 5)) {
+    return MathUtils.floor(bytes / Math.pow(base, 4), 2).toFixed(2)
+  }
+
+  return MathUtils.floor(bytes / Math.pow(base, 5), 2).toFixed(2)
+}
+
 const formatFileSize = (bytes: number): string => {
   return formatSize(bytes, 1000, fileSizeSuffix)
 }
@@ -49,4 +69,8 @@ const formatHashRate = (bytes: number): string => {
   return formatSize(bytes, 1000, hashRateSuffix)
 }
 
-export const FileUtils = { formatFileSize, formatMemorySize, formatHashRate }
+const formatHashRateWithoutSuffix = (bytes: number): string => {
+  return formatSizeWithoutSuffix(bytes, 1000)
+}
+
+export const FileUtils = { formatFileSize, formatMemorySize, formatHashRate, formatHashRateWithoutSuffix }

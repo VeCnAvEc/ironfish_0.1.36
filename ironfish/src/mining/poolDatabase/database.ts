@@ -77,11 +77,7 @@ export class PoolDatabase {
      `
 
     const result = await this.db.run(query, successfulPayoutCutoff, attemptPayoutCutoff)
-    console.log(await result);
-    
     if (result.changes !== 0 && result.lastID != null) {
-      console.log("result");
-      
       return result.lastID
     }
 
@@ -133,7 +129,6 @@ export class PoolDatabase {
   }
 
   async informationAboutTheBlock(condition: any, time: string | number) {
-    console.log('file: database.ts',' main condition: ', condition, '\ncondition.hashed: ', condition.hashedHeader, '\ncondition.height: ', condition.height );
     this.db.run(`INSERT INTO transactions (block, height, timestamp) VALUES(?,?,?)`, [condition.hashedHeader, condition.height, time])
   }
 
@@ -152,7 +147,6 @@ export class PoolDatabase {
 
   // Adding the amount paid to the user's balance
   async howMuchWasPaid( transaction: transactionReceives ) {
-    console.log(transaction)
     await this.db.run(`UPDATE farmer SET amount = amount + ? WHERE publicAddress = ?`, [transaction.amount, transaction.publicAddress])
   }
 
@@ -220,17 +214,17 @@ export class PoolDatabase {
     await this.db.run('DROP TABLE paidCoins;')
   }
 
-  async createTable() {
-    await this.db.run(`
-    CREATE TABLE paidCoins (
-      id INTEGER PRIMARY KEY,
-      publicAddress TEXT NOT NULL,
-      amount INTEGER NOT NULL DEFAULT 0,
-      timestamp STRING NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      createdAt INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )
-  `) 
- }
+//   async createTable() {
+//     await this.db.run(`
+//     CREATE TABLE paidCoins (
+//       id INTEGER PRIMARY KEY,
+//       publicAddress TEXT NOT NULL,
+//       amount INTEGER NOT NULL DEFAULT 0,
+//       timestamp STRING NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//       createdAt INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP
+//     )
+//   `) 
+//  }
 
   async getTransaction() {
     return await this.db.all('SELECT * FROM transactions')
@@ -243,8 +237,6 @@ export class PoolDatabase {
                             successfulTransaction.timestamp, successfulTransaction.createdAt,
                             successfulTransaction.hash
                            ])
-    console.log(successfulTransaction);
-    console.log(successfulTransaction.hash);
  }
 
   async getTheUserPayout(publicAddress: string): Promise<any> {
@@ -289,12 +281,22 @@ export class PoolDatabase {
   }
 
   async deletePayout() {
-    await this.db.run('DELETE from share')
+    await this.db.run('DELETE from payout')
   }
 
   async addColumnInTable() {
     const sql = 'ALTER TABLE paidCoins ADD COLUMN hash';
     await this.db.run(sql)
+  }
+
+  async removeOldRecordingsGlobalStatistics() {
+    const tenDaysAgo = new Date().getTime() - 172800000
+    await this.db.run('DELETE FROM eightHours WHERE timestamp < ?', tenDaysAgo)
+  }
+
+    async removeOldRecordings() {
+    const tenDaysAgo = new Date().getTime() - 172800000
+    await this.db.run('DELETE FROM userEightHours WHERE timestamp < ?', tenDaysAgo)
   }
 }
 

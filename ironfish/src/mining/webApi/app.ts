@@ -172,8 +172,24 @@ export default class webApi {
                 let userRateEightHours = await this.pool.getUserHashRateGraphics(publicAddress) 
                 let findUser = await this.pool.findUserByPublicAddress(publicAddress)
                 let awardsPaid = await this.pool.getTheUserPayout(publicAddress)
+                let averageUserEarnings: number | string;
                 this.hash = await this.StratumServer.valuesClients(FIND_PUBLICK_ADDRESS, publicAddress)
-    
+
+                // if (this.hash !== 0) {
+                    averageUserEarnings = 86400 * 20 * Number(FileUtils.formatHashRateWithoutSuffix(this.hash)) * 1000000 / 22883417649311;
+                    
+                    String(averageUserEarnings).split('').forEach((val: any, index: number, arr: any) => {
+                        if (val === '.') {
+                            const segment1 = arr.slice(0, index).join("")
+                            const segment2 = arr.slice(index, index + 8).join("")
+                            
+                            averageUserEarnings = `${segment1}${segment2}`
+                        }
+                    })
+                // } else {
+                //     averageUserEarnings = 0
+                // }
+
                 const errorNotFoundUser = {
                     status: 200,
                     errorMessage: 'successfully!' 
@@ -206,7 +222,8 @@ export default class webApi {
                         userRateEightHours: {
                             rawUserRateEightHours: userRateEightHours,
                         },
-                        awardsPaid: awardsPaid
+                        awardsPaid: awardsPaid,
+                        averageUserEarnings: averageUserEarnings
                     })
 
                     return res.send(json)

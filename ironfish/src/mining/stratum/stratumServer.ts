@@ -102,9 +102,11 @@ export class StratumServer {
     this.server = net.createServer((s) => this.onConnection(s))
   }
 
-  start(): void {
+  async start(): Promise<void> {    
     this.server.listen(this.port, this.host)
-    this.pool.setAllUsersStatusOfline()
+    await this.pool.setAllUsersStatusOfline()
+    await this.pool.removeOldRecordingsGlobalStatistics()
+    await this.pool.removeOldRecordings()
     this.getHashRateForGraphics()
     this.getUserHashRateForGraphics()
     this.addNewUsers()
@@ -371,7 +373,7 @@ export class StratumServer {
     addNewUsers() {
       setInterval(() => {
         this.getPoolDB()
-      }, 60000)
+      }, 5000)
     }
   
     // FIND_PUBLICK_ADDRESS = we get the hashrate of a certain user counting his shares
@@ -433,7 +435,7 @@ export class StratumServer {
     async getPoolDB() {
       const online = true
    
-      this.valuesClients(FIND_USER)
+      await this.valuesClients(FIND_USER)
    
        numberOfUsers = this.clients.size
        if (numberOfUsers > 0) {
@@ -467,9 +469,9 @@ export class StratumServer {
          for( let uniqueAddress = 0; uniqueAddress < user.length; uniqueAddress++ ) {
            const address = user[uniqueAddress].publicAddress
            
+           this.pool.setOnlineUser(address);
            this.pool.createUserFields(address, timestamp, online, timestamp)
          }
-  
          return user
        }
      }
